@@ -22,6 +22,9 @@ while (isRunning)
         case "3":
             SellCar(cars, carFileService, filePath);
             break;
+        case "4":
+            CheckAvailability(cars);
+            break;
         case "0":
             isRunning = false;
             break;
@@ -39,6 +42,7 @@ static void ShowMenu()
     Console.WriteLine("1. Show all cars");
     Console.WriteLine("2. Add new car");
     Console.WriteLine("3. Sell car");
+    Console.WriteLine("4. Check availability");
     Console.WriteLine("0. Exit");
     Console.Write("Choose an option: ");
 }
@@ -148,6 +152,38 @@ static void SellCar(List<Car> cars, CarFileService carFileService, string filePa
     carToSell.Available = false;
     carFileService.Save(filePath, cars);
     Console.WriteLine("Car sold successfully.");
+}
+
+static void CheckAvailability(List<Car> cars)
+{
+    Console.Write("Make (leave blank to skip): ");
+    string make = (Console.ReadLine() ?? string.Empty).Trim();
+
+    Console.Write("Model (leave blank to skip): ");
+    string model = (Console.ReadLine() ?? string.Empty).Trim();
+
+    if (string.IsNullOrWhiteSpace(make) && string.IsNullOrWhiteSpace(model))
+    {
+        Console.WriteLine("Enter a make, a model, or both.");
+        return;
+    }
+
+    List<Car> matchingCars = cars.Where(car =>
+        (string.IsNullOrWhiteSpace(make) || car.Make.Equals(make, StringComparison.OrdinalIgnoreCase)) &&
+        (string.IsNullOrWhiteSpace(model) || car.Model.Equals(model, StringComparison.OrdinalIgnoreCase)))
+        .ToList();
+
+    if (matchingCars.Count == 0)
+    {
+        Console.WriteLine("No matching cars found.");
+        return;
+    }
+
+    foreach (Car car in matchingCars)
+    {
+        string availability = car.Available ? "Available" : "Sold";
+        Console.WriteLine($"{car.CarId} | {car.Make} {car.Model} | {car.Price:F2} | {availability}");
+    }
 }
 
 static string? ReadRequiredText(string prompt)
