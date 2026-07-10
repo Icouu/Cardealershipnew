@@ -1,0 +1,3 @@
+CAR001|Toyota|Corolla|2020|18000.00|true
+CAR002|Volkswagen|Golf|2019|16500.00|false
+CAR003|Skoda|Octavia|2021|21500.00|true
