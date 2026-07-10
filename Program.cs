@@ -19,6 +19,9 @@ while (isRunning)
         case "2":
             AddCar(cars, carFileService, filePath);
             break;
+        case "3":
+            SellCar(cars, carFileService, filePath);
+            break;
         case "0":
             isRunning = false;
             break;
@@ -35,6 +38,7 @@ static void ShowMenu()
     Console.WriteLine("Car Dealership Management");
     Console.WriteLine("1. Show all cars");
     Console.WriteLine("2. Add new car");
+    Console.WriteLine("3. Sell car");
     Console.WriteLine("0. Exit");
     Console.Write("Choose an option: ");
 }
@@ -107,6 +111,43 @@ static void AddCar(List<Car> cars, CarFileService carFileService, string filePat
 
     carFileService.Save(filePath, cars);
     Console.WriteLine("Car added successfully.");
+}
+
+static void SellCar(List<Car> cars, CarFileService carFileService, string filePath)
+{
+    string? carId = ReadRequiredText("Car ID: ");
+
+    if (carId is null)
+    {
+        return;
+    }
+
+    string? model = ReadRequiredText("Model: ");
+
+    if (model is null)
+    {
+        return;
+    }
+
+    Car? carToSell = cars.FirstOrDefault(car =>
+        car.CarId.Equals(carId, StringComparison.OrdinalIgnoreCase) &&
+        car.Model.Equals(model, StringComparison.OrdinalIgnoreCase));
+
+    if (carToSell is null)
+    {
+        Console.WriteLine("No car with this ID and model was found.");
+        return;
+    }
+
+    if (!carToSell.Available)
+    {
+        Console.WriteLine("This car is already sold.");
+        return;
+    }
+
+    carToSell.Available = false;
+    carFileService.Save(filePath, cars);
+    Console.WriteLine("Car sold successfully.");
 }
 
 static string? ReadRequiredText(string prompt)
