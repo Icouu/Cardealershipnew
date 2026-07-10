@@ -197,5 +197,11 @@ static string? ReadRequiredText(string prompt)
         return null;
     }
 
+    if (value.Contains('|'))
+    {
+        Console.WriteLine("The character | is not allowed.");
+        return null;
+    }
+
     return value;
 }
